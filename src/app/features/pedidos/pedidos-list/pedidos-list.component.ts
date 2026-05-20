@@ -1,8 +1,10 @@
-import { Component, HostListener, OnInit, signal } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { Pedido, NovoPedido } from '../../../core/models/pedido.model';
 import { PedidosService } from '../../../core/services/pedidos.service';
+import { SupabaseService } from '../../../core/services/supabase.service';
 
 @Component({
   selector: 'app-pedidos-list',
@@ -11,7 +13,7 @@ import { PedidosService } from '../../../core/services/pedidos.service';
   templateUrl: './pedidos-list.component.html',
   styleUrl: './pedidos-list.component.scss',
 })
-export class PedidosListComponent implements OnInit {
+export class PedidosListComponent implements OnInit, OnDestroy {
   pedidos = signal<Pedido[]>([]);
   carregando = signal(true);
   erro = signal<string | null>(null);
@@ -30,10 +32,50 @@ export class PedidosListComponent implements OnInit {
 
   form: NovoPedido = { solicitante: '', alvo: '', descricao: '' };
 
-  constructor(private readonly pedidosService: PedidosService) {}
+  private canal: RealtimeChannel | null = null;
+
+  constructor(
+    private readonly pedidosService: PedidosService,
+    private readonly supabaseService: SupabaseService,
+  ) {}
 
   ngOnInit(): void {
     this.carregar();
+    this.inscreverRealtime();
+  }
+
+  ngOnDestroy(): void {
+    if (this.canal) {
+      this.supabaseService.client.removeChannel(this.canal);
+    }
+  }
+
+  private inscreverRealtime(): void {
+    this.canal = this.supabaseService.client
+      .channel('pedidos-changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'pedidos' },
+        (payload) => {
+          const novo = payload.new as Pedido;
+          this.pedidos.update((lista) => {
+            if (lista.some((p) => p.id === novo.id)) return lista;
+            return [novo, ...lista];
+          });
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'pedidos' },
+        (payload) => {
+          const id = (payload.old as Pick<Pedido, 'id'>).id;
+          this.pedidos.update((lista) => lista.filter((p) => p.id !== id));
+          if (this.pedidoSelecionado()?.pedido.id === id) {
+            this.pedidoSelecionado.set(null);
+          }
+        },
+      )
+      .subscribe();
   }
 
   @HostListener('document:keydown.escape')
@@ -90,7 +132,6 @@ export class PedidosListComponent implements OnInit {
     this.salvando.set(true);
     try {
       await this.pedidosService.criar(this.form);
-      await this.carregar();
       this.fecharModal();
     } catch {
       this.erro.set('Não foi possível salvar o pedido.');

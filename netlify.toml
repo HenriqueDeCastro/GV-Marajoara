@@ -1,0 +1,6 @@
+[build]
+  command   = "node scripts/generate-env.mjs && npx ng build --configuration production"
+  publish   = "dist/gv-marajoara/browser"
+
+[build.environment]
+  NODE_VERSION = "20"

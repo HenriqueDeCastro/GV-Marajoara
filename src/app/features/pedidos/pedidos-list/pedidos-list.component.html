@@ -1,0 +1,192 @@
+@if (mostrarModal()) {
+  <div class="modal-backdrop" (click)="fecharModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal-titulo">Novo Pedido de Oração</h2>
+      <form (ngSubmit)="salvar()">
+
+        <div class="campo">
+          <div class="campo-header">
+            <label for="solicitante">Seu nome</label>
+            <span class="contador" [class.contador-alerta]="form.solicitante.length >= LIMITES.solicitante * 0.85">
+              {{ form.solicitante.length }}/{{ LIMITES.solicitante }}
+            </span>
+          </div>
+          <input
+            id="solicitante" name="solicitante"
+            [(ngModel)]="form.solicitante"
+            [maxlength]="LIMITES.solicitante"
+            placeholder="Como você se chama?"
+            autocomplete="off" required
+          />
+        </div>
+
+        <div class="campo">
+          <div class="campo-header">
+            <label for="alvo">Por quem / o quê</label>
+            <span class="contador" [class.contador-alerta]="form.alvo.length >= LIMITES.alvo * 0.85">
+              {{ form.alvo.length }}/{{ LIMITES.alvo }}
+            </span>
+          </div>
+          <input
+            id="alvo" name="alvo"
+            [(ngModel)]="form.alvo"
+            [maxlength]="LIMITES.alvo"
+            placeholder="Nome da pessoa ou situação"
+            autocomplete="off" required
+          />
+        </div>
+
+        <div class="campo">
+          <div class="campo-header">
+            <label for="descricao">O pedido</label>
+            <span class="contador" [class.contador-alerta]="form.descricao.length >= LIMITES.descricao * 0.85">
+              {{ form.descricao.length }}/{{ LIMITES.descricao }}
+            </span>
+          </div>
+          <textarea
+            id="descricao" name="descricao"
+            [(ngModel)]="form.descricao"
+            [maxlength]="LIMITES.descricao"
+            placeholder="Descreva o pedido de oração..."
+            rows="4" required
+          ></textarea>
+        </div>
+
+        <div class="modal-acoes">
+          <button type="button" class="btn-cancelar" (click)="fecharModal()">Cancelar</button>
+          <button type="submit" class="btn-salvar" [disabled]="salvando()">
+            {{ salvando() ? 'Salvando...' : 'Compartilhar pedido' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (mostrarModalAdmin()) {
+  <div class="modal-backdrop" (click)="fecharModalAdmin()">
+    <div class="modal modal-admin" (click)="$event.stopPropagation()">
+      <div class="admin-icone">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <h2 class="modal-titulo">Acesso de administrador</h2>
+      <p class="admin-aviso">A senha será verificada na primeira exclusão.</p>
+      <form (ngSubmit)="ativarAdmin()">
+        <div class="campo">
+          <label for="senha-admin">Senha</label>
+          <input
+            id="senha-admin" name="senha-admin"
+            type="password"
+            [(ngModel)]="inputSenha"
+            placeholder="Digite a senha de admin"
+            autocomplete="off" required
+          />
+        </div>
+        <div class="modal-acoes">
+          <button type="button" class="btn-cancelar" (click)="fecharModalAdmin()">Cancelar</button>
+          <button type="submit" class="btn-salvar">Ativar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (pedidoSelecionado()) {
+  <div class="expand-backdrop" (click)="fecharPedido()">
+    <article
+      class="pedido-expandido cor-{{ pedidoSelecionado()!.corIndex }}"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="pedido-fita"></div>
+      <button class="expand-fechar" (click)="fecharPedido()" title="Fechar">×</button>
+      <p class="exp-solicitante">{{ pedidoSelecionado()!.pedido.solicitante }}</p>
+      <p class="exp-alvo">✦ {{ pedidoSelecionado()!.pedido.alvo }}</p>
+      <p class="exp-descricao">{{ pedidoSelecionado()!.pedido.descricao }}</p>
+      <div class="exp-rodape">
+        <time class="pedido-data">{{ pedidoSelecionado()!.pedido.criado_em | date:'dd/MM/yyyy' }}</time>
+        @if (podeApagar(pedidoSelecionado()!.pedido)) {
+          <button
+            class="btn-apagar"
+            (click)="apagar(pedidoSelecionado()!.pedido.id)"
+            title="Apagar pedido"
+          >×</button>
+        }
+      </div>
+    </article>
+  </div>
+}
+
+<div class="pagina">
+  <header class="site-header">
+    <img src="/sal-da-terra.svg" alt="Sal da Terra" class="header-logo" />
+    <h1>Pedidos de Oração</h1>
+    <p>GV Marajoara</p>
+
+    <button
+      class="btn-lock"
+      [class.btn-lock-ativo]="modoAdmin()"
+      (click)="modoAdmin() ? desativarAdmin() : abrirModalAdmin()"
+      [title]="modoAdmin() ? 'Desativar modo admin' : 'Modo admin'"
+    >
+      @if (modoAdmin()) {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+        </svg>
+      } @else {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      }
+    </button>
+  </header>
+
+  @if (modoAdmin()) {
+    <div class="admin-banner">
+      Modo admin ativo — você pode excluir qualquer pedido.
+      <button class="admin-banner-sair" (click)="desativarAdmin()">Sair</button>
+    </div>
+  }
+
+  <main class="conteudo">
+    <div class="acao-topo">
+      <button class="btn-novo" (click)="abrirModal()">+ Novo pedido</button>
+    </div>
+
+    @if (carregando()) {
+      <p class="estado-info">Carregando pedidos...</p>
+    } @else if (erro()) {
+      <p class="estado-erro">{{ erro() }}</p>
+    } @else if (pedidos().length === 0) {
+      <p class="estado-info">Nenhum pedido ainda. Seja o primeiro a compartilhar!</p>
+    } @else {
+      <ul class="pedidos-lista">
+        @for (pedido of pedidos(); track pedido.id; let i = $index) {
+          <li class="pedido-card" (click)="abrirPedido(pedido, i)" role="button" tabindex="0">
+            <div class="pedido-fita"></div>
+            <p class="pedido-solicitante">{{ pedido.solicitante }}</p>
+            <p class="pedido-alvo">✦ {{ pedido.alvo }}</p>
+            <p class="pedido-descricao">{{ pedido.descricao }}</p>
+            <div class="pedido-rodape">
+              <time class="pedido-data">{{ pedido.criado_em | date:'dd/MM/yy' }}</time>
+              @if (podeApagar(pedido)) {
+                <button
+                  class="btn-apagar"
+                  (click)="$event.stopPropagation(); apagar(pedido.id)"
+                  title="Apagar pedido"
+                >×</button>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </main>
+</div>

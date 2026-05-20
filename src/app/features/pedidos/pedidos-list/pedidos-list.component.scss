@@ -1,0 +1,554 @@
+// Paleta moderna — verdes profundos e sóbrios
+$header-bg:   #1a3528;
+$btn-primary: #2d6648;
+$btn-hover:   #1a3d2b;
+
+// Post-its — sage/olive, sem o verde neon de antes
+$cor1: #cdd8c2;
+$cor2: #c2cfb6;
+$cor3: #d4dfca;
+$cor4: #bad0b0;
+
+$texto-post:   #1e2e1a;
+$subtexto-post:#3a5432;
+
+// ─── Layout geral ─────────────────────────────────────────────────────────────
+.pagina {
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+.site-header {
+  background: $header-bg;
+  color: #fff;
+  text-align: center;
+  padding: 2.5rem 1rem 2rem;
+  margin-bottom: 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  position: relative;
+
+  .header-logo {
+    height: 72px;
+    width: auto;
+    margin-bottom: 1rem;
+    filter: brightness(0) invert(1);
+    opacity: 0.92;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  p {
+    font-size: 0.9rem;
+    opacity: 0.6;
+    margin-top: 0.3rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+}
+
+.btn-lock {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.45rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.55);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  &.btn-lock-ativo {
+    background: rgba(255, 200, 80, 0.18);
+    border-color: rgba(255, 200, 80, 0.5);
+    color: #ffd060;
+
+    &:hover {
+      background: rgba(255, 200, 80, 0.28);
+    }
+  }
+}
+
+// ─── Banner admin ─────────────────────────────────────────────────────────────
+.admin-banner {
+  background: #2a1a00;
+  color: #ffd060;
+  text-align: center;
+  padding: 0.55rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.admin-banner-sair {
+  background: transparent;
+  border: 1px solid rgba(255, 208, 96, 0.4);
+  border-radius: 4px;
+  color: #ffd060;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(255, 208, 96, 0.12);
+  }
+}
+
+// ─── Conteúdo central ─────────────────────────────────────────────────────────
+.conteudo {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  padding-top: 2.5rem;
+}
+
+// ─── Botão novo pedido ────────────────────────────────────────────────────────
+.acao-topo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+}
+
+.btn-novo {
+  background: $btn-primary;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.65rem 1.75rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(29, 61, 40, 0.3);
+  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+
+  &:hover {
+    background: $btn-hover;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(29, 61, 40, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(29, 61, 40, 0.3);
+  }
+}
+
+// ─── Estados ──────────────────────────────────────────────────────────────────
+.estado-info {
+  text-align: center;
+  color: #5a7a52;
+  font-size: 1rem;
+  margin-top: 3rem;
+}
+
+.estado-erro {
+  text-align: center;
+  color: #b53b3b;
+  margin-top: 3rem;
+}
+
+// ─── Grade de post-its ────────────────────────────────────────────────────────
+.pedidos-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  columns: 4;
+  column-gap: 1.5rem;
+
+  @media (max-width: 1024px) { columns: 3; }
+  @media (max-width: 720px)  { columns: 2; }
+  @media (max-width: 460px)  { columns: 1; }
+}
+
+// ─── Card post-it ─────────────────────────────────────────────────────────────
+.pedido-card {
+  break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+  padding: 1.4rem 1.1rem 1rem;
+  margin-bottom: 1.75rem;
+  border-radius: 1px;
+  background: $cor1;
+  box-shadow:
+    2px 3px 0 rgba(0, 0, 0, 0.08),
+    3px 5px 10px rgba(0, 0, 0, 0.14);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:nth-child(4n+1) { background: $cor1; }
+  &:nth-child(4n+2) { background: $cor2; }
+  &:nth-child(4n+3) { background: $cor3; }
+  &:nth-child(4n)   { background: $cor4; }
+
+  &:nth-child(5n+1) { transform: rotate(-1.6deg); }
+  &:nth-child(5n+2) { transform: rotate(1.1deg);  }
+  &:nth-child(5n+3) { transform: rotate(-0.5deg); }
+  &:nth-child(5n+4) { transform: rotate(1.8deg);  }
+  &:nth-child(5n)   { transform: rotate(-1deg);   }
+
+  &:hover {
+    transform: rotate(0deg) scale(1.03) translateY(-4px);
+    box-shadow:
+      4px 8px 20px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(0, 0, 0, 0.04);
+    z-index: 10;
+  }
+}
+
+// Fita adesiva
+.pedido-fita {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.pedido-solicitante {
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: $texto-post;
+  margin: 0.5rem 0 0.15rem;
+  line-height: 1.3;
+  // Nome em negrito visual via letter-spacing e cor mais escura
+  letter-spacing: 0.01em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.pedido-alvo {
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: 0.95rem;
+  color: $subtexto-post;
+  margin-bottom: 0.5rem;
+  opacity: 0.85;
+}
+
+.pedido-descricao {
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: 1rem;
+  color: $texto-post;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  word-break: break-word;
+}
+
+.pedido-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pedido-data {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.7rem;
+  color: #5a7252;
+  letter-spacing: 0.03em;
+}
+
+.btn-apagar {
+  background: transparent;
+  border: none;
+  color: #8b2a2a;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.15rem;
+  opacity: 0.45;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// ─── Post-it expandido ────────────────────────────────────────────────────────
+.expand-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 12, 0.62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+  padding: 1.5rem;
+}
+
+.pedido-expandido {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  padding: 2.75rem 2rem 1.75rem;
+  border-radius: 1px;
+  box-shadow:
+    4px 6px 0 rgba(0, 0, 0, 0.1),
+    6px 12px 32px rgba(0, 0, 0, 0.28);
+  animation: expand-entrar 0.22s ease;
+
+  &.cor-1 { background: $cor1; }
+  &.cor-2 { background: $cor2; }
+  &.cor-3 { background: $cor3; }
+  &.cor-4 { background: $cor4; }
+}
+
+@keyframes expand-entrar {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1);   }
+}
+
+.expand-fechar {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  padding: 0.1rem 0.25rem;
+  transition: color 0.15s;
+
+  &:hover { color: rgba(0, 0, 0, 0.65); }
+}
+
+.exp-solicitante {
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: 1.3rem;
+  color: $texto-post;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.exp-alvo {
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: 1.05rem;
+  color: $subtexto-post;
+  margin-bottom: 0.9rem;
+  opacity: 0.85;
+}
+
+.exp-descricao {
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: 1.15rem;
+  color: $texto-post;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 1.25rem;
+}
+
+.exp-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding-top: 0.75rem;
+}
+
+// ─── Modal ────────────────────────────────────────────────────────────────────
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 12, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  animation: modal-entrar 0.2s ease;
+}
+
+@keyframes modal-entrar {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+.modal-admin {
+  max-width: 380px;
+  text-align: center;
+}
+
+.admin-icone {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+
+  svg {
+    width: 36px;
+    height: 36px;
+    color: $header-bg;
+    opacity: 0.7;
+  }
+}
+
+.admin-aviso {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 1.25rem;
+}
+
+.modal-admin .campo {
+  text-align: left;
+}
+
+.modal-titulo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $header-bg;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.01em;
+}
+
+.campo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.3rem;
+}
+
+.contador {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.7rem;
+  color: #aab8a0;
+  transition: color 0.2s;
+
+  &.contador-alerta {
+    color: #b07030;
+  }
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 1.1rem;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #4a6048;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  input,
+  textarea {
+    border: 1.5px solid #c4d4ba;
+    border-radius: 6px;
+    padding: 0.6rem 0.85rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    color: #1e2d1e;
+    background: #fafff8;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    resize: vertical;
+
+    &:focus {
+      outline: none;
+      border-color: $btn-primary;
+      box-shadow: 0 0 0 3px rgba(45, 102, 72, 0.12);
+    }
+
+    &::placeholder {
+      color: #aabaa0;
+    }
+  }
+}
+
+.modal-acoes {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.btn-cancelar {
+  background: transparent;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  padding: 0.55rem 1.2rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: #888;
+    color: #333;
+  }
+}
+
+.btn-salvar {
+  background: $btn-primary;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.55rem 1.4rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) {
+    background: $btn-hover;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
